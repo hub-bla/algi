@@ -7,8 +7,7 @@ def create_random_bst(arr):
         return None
     root = TreeNode(arr[0])
     for i in range(1, len(arr)):
-        insert(root, arr[i])
-    
+        insert(root, arr[i])    
     return root
 
 

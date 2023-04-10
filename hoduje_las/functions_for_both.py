@@ -170,6 +170,7 @@ def balance(root:TreeNode)->TreeNode:
  
     #  get the number of nodes in input BST and simultaneously convert it into right linked list.
     count = vine(grand)
+    print(count)
     # get the height of tree in which all levels are completely filled
     h = int(math.log2(count + 1))
  
