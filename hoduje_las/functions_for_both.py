@@ -1,7 +1,6 @@
 from TreeNode import TreeNode
 import math
 
-
 def print_preorder(node):
     if node == None:
         return
@@ -163,7 +162,7 @@ def second_phase_of_balance(grand: TreeNode, m:int) -> None:
 
 
 def balance(root:TreeNode)->TreeNode:
-    print_preorder(root)
+    # print_preorder(root)
     grand = TreeNode(0)
  
     # assign the right of dummy node as our input BST
@@ -171,7 +170,6 @@ def balance(root:TreeNode)->TreeNode:
  
     #  get the number of nodes in input BST and simultaneously convert it into right linked list.
     count = vine(grand)
-    print(get_balance(grand))
     # get the height of tree in which all levels are completely filled
     h = int(math.log2(count + 1))
  
@@ -187,7 +185,7 @@ def balance(root:TreeNode)->TreeNode:
         second_phase_of_balance(grand, m)
  
     # return the root of the balanced binary search tree
-    print_preorder(root)
+    # print_preorder(grand.right)
     return grand.right
 #zostaje root idk dlaczego
 def delete_tree(node:TreeNode)->None:
