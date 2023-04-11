@@ -4,8 +4,9 @@ from avl import create_avl_from_arr
 
 
 
-l1 = [2,1,3, 4]
+l1 = [2,1,3, 4, 5,6,7]
 
 
 root_bts = create_random_bst(l1)
-print(vine(root_bts))
+root_bts = balance(root_bts)
+print_inorder(root_bts)

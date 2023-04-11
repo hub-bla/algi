@@ -150,14 +150,15 @@ def vine(node:TreeNode)->int:
 
 
 def second_phase_of_balance(grand: TreeNode, m:int) -> None:
+    var_for_pointers_connections = grand
     tmp = grand.right
     for i in range(m):
         oldTmp = tmp
         tmp = tmp.right
-        grand.right = tmp
+        var_for_pointers_connections.right = tmp
         oldTmp.right = tmp.left
         tmp.left = oldTmp
-        grand = tmp
+        var_for_pointers_connections = tmp
         tmp = tmp.right
 
 
@@ -183,6 +184,7 @@ def balance(root:TreeNode)->TreeNode:
     # left rotate till m becomes 0
     # Steps is done as mentioned in algorithm to make BST balanced.
     for m in [m // 2**i for i in range(1, h + 1)]:
+
         second_phase_of_balance(grand, m)
  
     # return the root of the balanced binary search tree
