@@ -161,15 +161,41 @@ def dfs_neigh_matrix(neigh_df:pd.DataFrame):
             break
         traverse_dfs_neigh(neigh_matrix, node, visited)
 
+
+def traverse_dfs_graph_m(graph_mtrx, node, visited):
+    visited[node] = True
+    print(node)
+    for i in range(len(visited)):
+        node2 = graph_mtrx[node][len(visited)]
+        
+        if visited[node2] is False:
+            
+            traverse_dfs_graph_m(graph_mtrx, node2, visited)
+        else:
+            for k in graph_mtrx[node]:
+                if k >0 and k< len(visited) and visited[k] is False:
+                    traverse_dfs_graph_m(graph_mtrx, graph_mtrx[node][k], visited)
+def dfs_graph_matrix(graph_df:pd.DataFrame):
+    graph_mtrx = graph_df.to_numpy()
+    visited = [False for i in range(graph_mtrx.shape[0])]
+    for node in range(graph_mtrx.shape[0]):
+        if False not in visited:
+            break
+        # if visited[node] is False:
+        traverse_dfs_graph_m(graph_mtrx, node, visited)
+
+
+
+
 neigh = load_neigh('przykładowy_graf.txt', directed=True)
 graph_mtrx = graph_matrix('przykładowy_graf.txt')
 
 neigh_df = pd.DataFrame(neigh)
 graph_matrix_df = pd.DataFrame(graph_mtrx).astype('Int64')
 
-dfs_neigh_matrix(neigh_df)
+dfs_graph_matrix(graph_matrix_df)
 
-print("Neigh:")
-print(neigh_df)
-print("Graph matrix:")
-print(graph_matrix_df)
+# print("Neigh:")
+# print(neigh_df)
+# print("Graph matrix:")
+# print(graph_matrix_df)
