@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import math
 def same_merge(x):
     for i in x.index:
         if x.iloc[i] > 0:
@@ -143,7 +143,7 @@ def graph_matrix(file_name:str)->list:
             for i in no_incident_dict[node]:
                 graph_matrix[node][i] = last_no_inc * (-1)
 
-    return graph_matrix
+    return graph_matrix.astype('int32')
 
 def traverse_dfs_neigh(neigh_matrix:np.array, node:int, visited:list):
     visited[node] = True
@@ -166,35 +166,100 @@ def traverse_dfs_graph_m(graph_mtrx, node, visited):
     visited[node] = True
     print(node)
     for i in range(len(visited)):
-        node2 = graph_mtrx[node][len(visited)]
-        
-        if visited[node2] is False:
+        node2 = graph_mtrx[node][i]
+        if np.isnan(node2) != True:
+            if 0<= node2 and node2 < len(visited) and visited[i] is False:
             
-            traverse_dfs_graph_m(graph_mtrx, node2, visited)
-        else:
-            for k in graph_mtrx[node]:
-                if k >0 and k< len(visited) and visited[k] is False:
-                    traverse_dfs_graph_m(graph_mtrx, graph_mtrx[node][k], visited)
+                traverse_dfs_graph_m(graph_mtrx, i, visited)
+       
+        if False not in visited:
+            break
 def dfs_graph_matrix(graph_df:pd.DataFrame):
     graph_mtrx = graph_df.to_numpy()
     visited = [False for i in range(graph_mtrx.shape[0])]
     for node in range(graph_mtrx.shape[0]):
         if False not in visited:
             break
-        # if visited[node] is False:
-        traverse_dfs_graph_m(graph_mtrx, node, visited)
+        if visited[node] is False:
+            traverse_dfs_graph_m(graph_mtrx, node, visited)
+
+
+def kahn_neigh(neigh_matrix):
+    degrees = [0]*neigh_matrix.shape[0]
+    for node1 in range(neigh_matrix.shape[0]):
+        for node2 in neigh_matrix[node1]:
+            if node2 == -1:
+                degrees[node1] +=1
+    
+
+    queue = []
+    for node in range(neigh_matrix.shape[0]):
+        if degrees[node]==0:
+            queue.append(node)
+
+    count = 0
+
+    topological_order=[]
+
+    while queue:
+        node = queue.pop(0)
+        degrees[node]= None
+        topological_order.append(node)
+        for node2 in range(neigh_matrix[node].shape[0]):
+            if neigh_matrix[node2][node] == -1:
+                degrees[node2] -=1
+            if degrees[node2]==0 and node!=node2:
+                degrees[node2]= None
+                queue.append(node2)
+        count+=1
+    if count != neigh_matrix.shape[0]:
+        print("Cykle w grafie")
+    else:
+        print(topological_order)
 
 
 
+def kahn_graph(graph_matrix):
+    degrees = [0]*graph_matrix.shape[0]
+
+    for node1 in range(graph_matrix.shape[0]):
+        for node2 in range(graph_matrix[node1].shape[0]-3):
+            if graph_matrix[node1][node2]>=graph_matrix.shape[0]:
+                degrees[node1] +=1
+    
+    queue = []
+    for node in range(graph_matrix.shape[0]):
+        if degrees[node]==0:
+            queue.append(node)
+
+    count = 0
+    topological_order=[]
+
+    while queue:
+        node = queue.pop(0)
+        degrees[node]= None
+        topological_order.append(node)
+        for node2 in range(graph_matrix.shape[0]):
+            if graph_matrix[node2][node]>=graph_matrix.shape[0]:
+                degrees[node2] -=1
+            if degrees[node2]==0 and node!=node2:
+                degrees[node2]= None
+                queue.append(node2)
+        count+=1
+    if count != graph_matrix.shape[0]:
+        print("Cykle w grafie")
+    else:
+        print(topological_order)
 
 neigh = load_neigh('przykładowy_graf.txt', directed=True)
 graph_mtrx = graph_matrix('przykładowy_graf.txt')
 
 neigh_df = pd.DataFrame(neigh)
-graph_matrix_df = pd.DataFrame(graph_mtrx).astype('Int64')
-
-dfs_graph_matrix(graph_matrix_df)
-
+neigh_df = neigh_df.replace({pd.NA: np.nan})
+graph_matrix_df = pd.DataFrame(graph_mtrx).apply(lambda x: x.replace(to_replace=-2147483648, value =None) )
+# dfs_graph_matrix(graph_matrix_df)
+# kahn_neigh(neigh_df.to_numpy())
+kahn_graph(graph_mtrx)
 # print("Neigh:")
 # print(neigh_df)
 # print("Graph matrix:")
