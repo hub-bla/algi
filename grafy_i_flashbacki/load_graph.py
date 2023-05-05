@@ -1,11 +1,7 @@
 import pandas as pd
 import numpy as np
-import math
-def same_merge(x):
-    for i in x.index:
-        if x.iloc[i] > 0:
-            return 1
-    return 0
+from sąsiady import create_neighbours_matrix_directed_without_cycles
+
 def load_neigh(file_name:str, directed=False)->list:
     file = open(file_name, 'r')
     lines = file.readlines()
@@ -34,7 +30,6 @@ def incident_matrix(file_name:str, directed=False)->list:
     for edge_num, line in enumerate(lines):
         i_node1, i_node2 = map(int, line.split(' '))
         if directed:
-
             incident[i_node1][edge_num] = -1
         else:
             incident[i_node1][edge_num] = 1 
@@ -141,7 +136,7 @@ def graph_matrix(file_name:str)->list:
             last_no_inc= no_incident_dict[node][-1]
             graph_matrix[node][num_nodes+2] = first_no_inc
             for i in no_incident_dict[node]:
-                graph_matrix[node][i] = last_no_inc * (-1)
+                graph_matrix[node][i] = (last_no_inc * (-1)) -1
 
     return graph_matrix.astype('int32')
 
@@ -159,7 +154,8 @@ def dfs_neigh_matrix(neigh_df:pd.DataFrame):
     for node in range(neigh_matrix.shape[0]):
         if False not in visited:
             break
-        traverse_dfs_neigh(neigh_matrix, node, visited)
+        if visited[node]is False:
+            traverse_dfs_neigh(neigh_matrix, node, visited)
 
 
 def traverse_dfs_graph_m(graph_mtrx, node, visited):
@@ -191,7 +187,7 @@ def kahn_neigh(neigh_matrix):
             if node2 == -1:
                 degrees[node1] +=1
     
-
+    
     queue = []
     for node in range(neigh_matrix.shape[0]):
         if degrees[node]==0:
@@ -200,23 +196,25 @@ def kahn_neigh(neigh_matrix):
     count = 0
 
     topological_order=[]
-
+    print(degrees)
     while queue:
         node = queue.pop(0)
         degrees[node]= None
         topological_order.append(node)
         for node2 in range(neigh_matrix[node].shape[0]):
+            
             if neigh_matrix[node2][node] == -1:
                 degrees[node2] -=1
-            if degrees[node2]==0 and node!=node2:
+            if degrees[node2]==0 and node!=node2 and node2 not in queue:
                 degrees[node2]= None
                 queue.append(node2)
         count+=1
-    if count != neigh_matrix.shape[0]:
+    if len(topological_order) != neigh_matrix.shape[0]:
         print("Cykle w grafie")
+        return False
     else:
         print(topological_order)
-
+        return True
 
 
 def kahn_graph(graph_matrix):
@@ -234,7 +232,6 @@ def kahn_graph(graph_matrix):
 
     count = 0
     topological_order=[]
-
     while queue:
         node = queue.pop(0)
         degrees[node]= None
@@ -251,16 +248,138 @@ def kahn_graph(graph_matrix):
     else:
         print(topological_order)
 
-neigh = load_neigh('przykładowy_graf.txt', directed=True)
-graph_mtrx = graph_matrix('przykładowy_graf.txt')
+
+def trajan_dfs_neigh(neigh_matrix, node, colors, stack):
+    colors[node] = 1
+    
+    for node2 in range(neigh_matrix[node].shape[0]):
+        if neigh_matrix[node][node2] == 1 and  colors[node2] == 0 :
+            trajan_dfs_neigh(neigh_matrix, node2, colors, stack)
+    
+    colors[node] = 2
+    if node not in stack:
+        stack.append(node) 
+ 
+def tarjan_neigh(neigh_matrix):
+
+    #COLORS
+    # 0 - white
+    # 1 - gray
+    # 2 - black
+    colors = [0] * neigh_matrix.shape[0]
+    degrees = [0]*neigh_matrix.shape[0]
+    stack = []
+    for node1 in range(neigh_matrix.shape[0]):
+        for node2 in neigh_matrix[node1]:
+            if node2 == -1:
+                degrees[node1] +=1
+    
+    first_node = np.argmin(degrees)
+    trajan_dfs_neigh(neigh_matrix, first_node, colors, stack)
+    for node in range(neigh_matrix.shape[0]):
+        if colors[node]!=1 and colors[node]!=2:
+            trajan_dfs_neigh(neigh_matrix,  node, colors, stack)
+    if len(stack)!= len(colors):
+        print("Cykle w grafie")
+    else:
+        stack.reverse()
+        print(stack)
+
+        
+
+def trajan_dfs_graph(graph_mtrx, node, colors, stack):
+    colors[node] = 1
+    for node2 in range(graph_mtrx.shape[0]):
+        if 0 <= graph_mtrx[node][node2] and graph_mtrx[node][node2] < graph_mtrx.shape[0] and  colors[node2] == 0 :
+            trajan_dfs_graph(graph_mtrx, node2, colors, stack)
+        
+
+    colors[node] = 2
+    if node not in stack:
+        stack.append(node) 
+
+def tarjan_graph(graph_mtrx):
+    colors = [0] * graph_mtrx.shape[0]
+    degrees = [0]*graph_mtrx.shape[0]
+    stack = []
+    for node1 in range(graph_mtrx.shape[0]):
+        for node2 in range(graph_mtrx[node1].shape[0]-3):
+            if graph_mtrx[node1][node2]>=graph_mtrx.shape[0]:
+                degrees[node1] +=1
+
+    first_node = np.argmin(degrees)
+
+            
+    trajan_dfs_graph(graph_mtrx, first_node, colors, stack)
+    for node in range(graph_mtrx.shape[0]):
+        if colors[node]!=1 and colors[node]!=2:
+            trajan_dfs_neigh(graph_mtrx,  node, colors, stack)
+    if len(stack)!= len(colors):
+        print("Cykle w grafie")
+    else:
+        stack.reverse()
+        print(stack)
+
+
+
+def del_neigh(neigh_matrix,node):
+    neigh_matrix = neigh_matrix.tolist() 
+    for node2 in range(len(neigh_matrix)):
+        neigh_matrix[node][node2] = None
+        neigh_matrix[node2][node] = None
+    return  pd.DataFrame(neigh_matrix).astype('Int32')
+
+def del_graph(graph_mtrx,node):
+    for node2 in range(graph_mtrx.shape[0]):
+        if graph_mtrx[node2][-1] == node:
+            for i in range(graph_mtrx[node2].shape[0]):
+                if 0>graph_mtrx[node2][i] and i != node:
+                     graph_mtrx[node2][-1] = i
+                     break
+        if graph_mtrx[node2][-2] == node:
+            for i in range(graph_mtrx[node2].shape[0]):
+                if graph_mtrx[node2][i]>graph_mtrx.shape[0] and i != node:
+                    graph_mtrx[node2][-2] = i
+                    break
+        if graph_mtrx[node2][-3] == node:
+            for i in range(graph_mtrx[node2].shape[0]):
+                if  graph_mtrx[node2][i]<graph_mtrx.shape[0] and 0< graph_mtrx[node2][i] and i != node:
+                    graph_mtrx[node2][-3] = i
+                    break
+        graph_mtrx[node2][node] = np.nan
+        graph_mtrx[node][node2] = np.nan
+
+
+    graph_mtrx[node][-1] = np.nan
+    graph_mtrx[node][-2] = np.nan
+    graph_mtrx[node][-3] = np.nan
+    return graph_mtrx
+neigh = load_neigh('graph1.txt', directed=True)
+graph_mtrx = graph_matrix('graph1.txt')
 
 neigh_df = pd.DataFrame(neigh)
 neigh_df = neigh_df.replace({pd.NA: np.nan})
 graph_matrix_df = pd.DataFrame(graph_mtrx).apply(lambda x: x.replace(to_replace=-2147483648, value =None) )
+
+neigh2_df = create_neighbours_matrix_directed_without_cycles(10)
+
+after = del_neigh(neigh2_df.to_numpy(), 2)
+print(pd.DataFrame(after))
+
+gafter = del_graph(graph_matrix_df.to_numpy(), 2)
+print(pd.DataFrame(gafter))
+print("NEIGH DFS")
+dfs_neigh_matrix(neigh2_df)
+# print("GRAPH DFS")
 # dfs_graph_matrix(graph_matrix_df)
-# kahn_neigh(neigh_df.to_numpy())
-kahn_graph(graph_mtrx)
-# print("Neigh:")
-# print(neigh_df)
-# print("Graph matrix:")
-# print(graph_matrix_df)
+
+print("NEIGH KAHN")
+kahn_neigh(neigh2_df.to_numpy())
+# print("GRAPH KAHN")
+# kahn_graph(graph_mtrx)
+print("NEIGH TARJAN")
+tarjan_neigh(neigh2_df.to_numpy())
+print(neigh2_df)
+# print("GRAPH TARJAN")
+# tarjan_graph(graph_mtrx)
+
