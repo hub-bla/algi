@@ -148,8 +148,7 @@ def traverse_dfs_neigh(neigh_matrix:np.array, node:int, visited:list):
             traverse_dfs_neigh(neigh_matrix, node2, visited)
         
 
-def dfs_neigh_matrix(neigh_df:pd.DataFrame):
-    neigh_matrix = neigh_df.to_numpy()
+def dfs_neigh_matrix(neigh_matrix):
     visited = [False for i in range(neigh_matrix.shape[0])]
     for node in range(neigh_matrix.shape[0]):
         if False not in visited:
@@ -170,8 +169,7 @@ def traverse_dfs_graph_m(graph_mtrx, node, visited):
        
         if False not in visited:
             break
-def dfs_graph_matrix(graph_df:pd.DataFrame):
-    graph_mtrx = graph_df.to_numpy()
+def dfs_graph_matrix(graph_mtrx):
     visited = [False for i in range(graph_mtrx.shape[0])]
     for node in range(graph_mtrx.shape[0]):
         if False not in visited:
@@ -222,8 +220,9 @@ def kahn_graph(graph_matrix):
 
     for node1 in range(graph_matrix.shape[0]):
         for node2 in range(graph_matrix[node1].shape[0]-3):
-            if graph_matrix[node1][node2]>=graph_matrix.shape[0]:
-                degrees[node1] +=1
+            if graph_matrix[node1][node2] is int:
+                if graph_matrix[node1][node2]>=graph_matrix.shape[0]:
+                    degrees[node1] +=1
     
     queue = []
     for node in range(graph_matrix.shape[0]):
@@ -237,11 +236,12 @@ def kahn_graph(graph_matrix):
         degrees[node]= None
         topological_order.append(node)
         for node2 in range(graph_matrix.shape[0]):
-            if graph_matrix[node2][node]>=graph_matrix.shape[0]:
-                degrees[node2] -=1
-            if degrees[node2]==0 and node!=node2:
-                degrees[node2]= None
-                queue.append(node2)
+            if graph_matrix[node2][node] is int:
+                if graph_matrix[node2][node]>=graph_matrix.shape[0]:
+                    degrees[node2] -=1
+                if degrees[node2]==0 and node!=node2:
+                    degrees[node2]= None
+                    queue.append(node2)
         count+=1
     if count != graph_matrix.shape[0]:
         print("Cykle w grafie")
@@ -313,7 +313,7 @@ def tarjan_graph(graph_mtrx):
     trajan_dfs_graph(graph_mtrx, first_node, colors, stack)
     for node in range(graph_mtrx.shape[0]):
         if colors[node]!=1 and colors[node]!=2:
-            trajan_dfs_neigh(graph_mtrx,  node, colors, stack)
+            trajan_dfs_graph(graph_mtrx,  node, colors, stack)
     if len(stack)!= len(colors):
         print("Cykle w grafie")
     else:

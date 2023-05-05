@@ -98,5 +98,5 @@ def graph_matrix(n)->list:
             graph_mtx[node][n+2] = first_no_inc
             for i in no_incident_dict[node]:
                 graph_mtx[node][i] = (last_no_inc * (-1)) -1
-
-    return pd.DataFrame(graph_mtx.astype('int32')).apply(lambda x: x.replace(to_replace=-2147483648, value =None) )
+    graph_mtx.astype('int32')
+    return pd.DataFrame(graph_mtx).apply(lambda x: x.replace(to_replace=-2147483648, value =None) )
