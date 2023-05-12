@@ -1,6 +1,10 @@
 import pandas as pd
 import numpy as np
 import random
+import itertools
+import math
+
+
 def create_neighbours_matrix_directed_without_cycles(matrix_edge:int)->pd.DataFrame:
     '''SATURATION 50%'''
     neigh = [[0 for i in range(matrix_edge)]for j in range(matrix_edge)]
@@ -23,6 +27,43 @@ def create_neighbours_matrix_directed_without_cycles(matrix_edge:int)->pd.DataFr
 
     return pd.DataFrame(neigh)
 
+def create_neigh_with_specific_saturation(matrix_edge, sat, directed=False):
+    neigh = [[0 for i in range(matrix_edge)]for j in range(matrix_edge)]
+    n_of_edges = (matrix_edge*(matrix_edge-1))/2
+    connect_nodes_first = [1]* matrix_edge
+    ones = abs(int(n_of_edges* sat) - matrix_edge)
+    zeros =int( n_of_edges - ones)
+    arr_of_ones = np.ones(shape=ones).astype('int32')
+    arr_of_zeros = np.zeros(shape=zeros).astype('int32')
+    zeros_and_ones =  np.concatenate((arr_of_ones, arr_of_zeros), axis=None) 
+    for i in range(1, matrix_edge):
+        if directed is False:
+            neigh[i-1][i] = connect_nodes_first[0]
+            neigh[i][i-1]  = neigh[i-1][i]
+        else:
+            neigh[i-1][i] = connect_nodes_first[0]
+            neigh[i][i-1]  = neigh[i-1][i] *(-1)
+        connect_nodes_first = connect_nodes_first[1:]
+
+    np.random.shuffle(zeros_and_ones)
+    for i in range(0, matrix_edge):
+        for j in range(0, i):
+            if neigh[i][j] == 1 or neigh[i][j] == -1:
+                continue
+            if directed is True:
+                direction = random.choice([-1,1])
+                neigh[i][j] = zeros_and_ones[0] * direction
+                neigh[j][i] = neigh[i][j] *(-1)
+            else:
+                neigh[i][j] = zeros_and_ones[0]
+                neigh[j][i] = neigh[i][j]
+            zeros_and_ones = zeros_and_ones[1:]
+
+
+
+    return pd.DataFrame(neigh)
+
+
 
 def nexts_dict(n):
     neigh = create_neighbours_matrix_directed_without_cycles(n).to_numpy()
@@ -35,9 +76,23 @@ def nexts_dict(n):
                 nexts[node].append(node2)
     return nexts
 
+def nexts_dict_generator(n, sat):
+    neigh = create_neigh_with_specific_saturation(n, sat, directed=True)
+
+    nexts = dict()
+    for i in range(neigh.shape[0]):
+        nexts[i] = []
+    for node in range(neigh.shape[0]):
+        for node2 in range(neigh.shape[0]):
+            if neigh[node][node2] == 1:
+                nexts[node].append(node2)
+    return nexts
+
+# print(nexts_dict_generator(50, 0.1))
 
 def previous_dict(n)->list:
     neigh = create_neighbours_matrix_directed_without_cycles(n).to_numpy()
+
     previous = dict()
     for i in range(neigh.shape[0]):
         previous[i] = []
