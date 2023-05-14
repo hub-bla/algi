@@ -29,9 +29,13 @@ def create_neighbours_matrix_directed_without_cycles(matrix_edge:int)->pd.DataFr
 
 def create_neigh_with_specific_saturation(matrix_edge, sat, directed=False):
     neigh = [[0 for i in range(matrix_edge)]for j in range(matrix_edge)]
-    n_of_edges = (matrix_edge*(matrix_edge-1))/2
+    n_of_edges = 0
+    if (directed is True):
+        n_of_edges = (matrix_edge*(matrix_edge-1))
+    else:
+        n_of_edges= (matrix_edge*(matrix_edge-1))/2
     connect_nodes_first = [1]* matrix_edge
-    ones = abs(int(n_of_edges* sat) - matrix_edge)
+    ones = abs(int(n_of_edges* sat) - matrix_edge)-2
     zeros =int( n_of_edges - ones)
     arr_of_ones = np.ones(shape=ones).astype('int32')
     arr_of_zeros = np.zeros(shape=zeros).astype('int32')
@@ -58,9 +62,9 @@ def create_neigh_with_specific_saturation(matrix_edge, sat, directed=False):
                 neigh[i][j] = zeros_and_ones[0]
                 neigh[j][i] = neigh[i][j]
             zeros_and_ones = zeros_and_ones[1:]
-
-
-
+    random_last_node = random.randint(matrix_edge-5,matrix_edge-2)
+    neigh[random_last_node][0] = 1
+    neigh[matrix_edge-1][random_last_node] =1
     return pd.DataFrame(neigh)
 
 
@@ -88,11 +92,10 @@ def nexts_dict_generator(n, sat):
                 nexts[node].append(node2)
     return nexts
 
-# print(nexts_dict_generator(50, 0.1))
+# print(nexts_dict_generator(25, 0.1))
 
 def previous_dict(n)->list:
     neigh = create_neighbours_matrix_directed_without_cycles(n).to_numpy()
-
     previous = dict()
     for i in range(neigh.shape[0]):
         previous[i] = []

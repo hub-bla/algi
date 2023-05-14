@@ -6,21 +6,20 @@ from load_graph import kahn_graph, kahn_neigh, tarjan_graph, tarjan_neigh
 import numpy as np
 import pandas as pd
 from cycles import hamilton_neigh, hamilton_nexts
-k = [_ for _ in range(30, 80,5)]
-saturations = [i/100 for i in range(10, 100, 10)]
+k = [_ for _ in range(25, 35)]
+saturations = [i/100 for i in range(40, 100, 10)]
 print(saturations)
-funcs = {"h_nei": [hamilton_neigh, create_neigh_with_specific_saturation],"h_nxts": [hamilton_nexts,nexts_dict_generator]}
+funcs = {"h_nxts": [hamilton_nexts,nexts_dict_generator]}
 
 
 
 def measure(func, graph):
     measurements = []
-    for i in range(5):
-        print(f'round {i}')
-        start = time.time()
-        func(graph)
-        end = time.time()
-        measurements.append((end-start))
+    
+    start = time.time()
+    func(graph)
+    end = time.time()
+    measurements.append((end-start))
     return np.mean(measurements), np.std(measurements)
 
 
@@ -32,6 +31,7 @@ for func in funcs.keys():
         measurements_mean = []
         measurements_std = []
         for g_size in k:
+            print(f'Graph size:{g_size}, Saturation: {saturation}')
             graph = funcs[func][1](g_size, saturation)
             mean, std = measure(funcs[func][0], graph)
             measurements_mean.append(mean)
@@ -41,4 +41,4 @@ for func in funcs.keys():
         df[f'{func}_{saturation}_std'] = measurements_std
 
 
-df.to_csv('hamilton.csv')
+        df.to_csv('hamilton.csv')
