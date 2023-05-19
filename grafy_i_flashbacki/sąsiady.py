@@ -34,39 +34,24 @@ def create_neigh_with_specific_saturation(matrix_edge, sat, directed=False):
         n_of_edges = (matrix_edge*(matrix_edge-1))
     else:
         n_of_edges= (matrix_edge*(matrix_edge-1))/2
-    connect_nodes_first = [1]* matrix_edge
-    ones = abs(int(n_of_edges* sat) - matrix_edge)-2
+   
+    ones = int(n_of_edges* sat) 
     zeros =int( n_of_edges - ones)
     arr_of_ones = np.ones(shape=ones).astype('int32')
     arr_of_zeros = np.zeros(shape=zeros).astype('int32')
     zeros_and_ones =  np.concatenate((arr_of_ones, arr_of_zeros), axis=None) 
-    for i in range(1, matrix_edge):
-        if directed is False:
-            neigh[i-1][i] = connect_nodes_first[0]
-            neigh[i][i-1]  = neigh[i-1][i]
-        else:
-            neigh[i-1][i] = connect_nodes_first[0]
-            neigh[i][i-1]  = neigh[i-1][i] *(-1)
-        connect_nodes_first = connect_nodes_first[1:]
-
     np.random.shuffle(zeros_and_ones)
     for i in range(0, matrix_edge):
         for j in range(0, i):
-            if neigh[i][j] == 1 or neigh[i][j] == -1:
-                continue
             if directed is True:
                 direction = random.choice([-1,1])
                 neigh[i][j] = zeros_and_ones[0] * direction
                 neigh[j][i] = neigh[i][j] *(-1)
             else:
                 neigh[i][j] = zeros_and_ones[0]
-                neigh[j][i] = neigh[i][j]
+                neigh[j][i] = zeros_and_ones[0]
             zeros_and_ones = zeros_and_ones[1:]
-    random_last_node = random.randint(matrix_edge-5,matrix_edge-2)
-    neigh[random_last_node][0] = 1
-    neigh[matrix_edge-1][random_last_node] =1
     return pd.DataFrame(neigh)
-
 
 
 def nexts_dict(n):
@@ -92,7 +77,6 @@ def nexts_dict_generator(n, sat):
                 nexts[node].append(node2)
     return nexts
 
-# print(nexts_dict_generator(25, 0.1))
 
 def previous_dict(n)->list:
     neigh = create_neighbours_matrix_directed_without_cycles(n).to_numpy()

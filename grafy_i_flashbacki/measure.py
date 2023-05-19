@@ -5,35 +5,38 @@ from sąsiady import create_neigh_with_specific_saturation, nexts_dict_generator
 from load_graph import kahn_graph, kahn_neigh, tarjan_graph, tarjan_neigh
 import numpy as np
 import pandas as pd
-from cycles import hamilton_neigh, hamilton_nexts
-k = [_ for _ in range(25, 35)]
-saturations = [i/100 for i in range(40, 100, 10)]
+from cycles import hamilton_neigh, hamilton_nexts, euler_neigh, euler_nexts
+k = [_ for _ in range(10, 20)]
+saturations = [i/100 for i in range(10, 100, 10)]
 print(saturations)
-funcs = {"h_nxts": [hamilton_nexts,nexts_dict_generator]}
+funcs = {"h_nxts": [hamilton_nexts,nexts_dict_generator], "h_neigh": [hamilton_neigh,create_neigh_with_specific_saturation]}
 
 
 
-def measure(func, graph):
+def measure(func, generator, g_size, saturation):
     measurements = []
-    
-    start = time.time()
-    func(graph)
-    end = time.time()
-    measurements.append((end-start))
+    for i in range(5):
+        print(f'Graph size:{g_size}, Saturation: {saturation}')
+        graph = generator(g_size, saturation)
+        start = time.time()
+        func(graph)
+        end = time.time()
+        measurements.append((end-start))
     return np.mean(measurements), np.std(measurements)
 
 
 
 df = pd.DataFrame()
+funcs_ke = funcs.keys()
 for func in funcs.keys():
     for saturation in saturations:
         print("Working...")
         measurements_mean = []
         measurements_std = []
         for g_size in k:
-            print(f'Graph size:{g_size}, Saturation: {saturation}')
-            graph = funcs[func][1](g_size, saturation)
-            mean, std = measure(funcs[func][0], graph)
+            
+            
+            mean, std = measure(funcs[func][0], funcs[func][1], g_size, saturation)
             measurements_mean.append(mean)
             measurements_std.append(std)
         

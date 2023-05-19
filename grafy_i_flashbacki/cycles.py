@@ -32,8 +32,7 @@ def cycle_finding(node, neigh_matrix, track):
 
 def hamilton_neigh(neigh_matrix):
     track = [-1]*len(neigh_matrix)
-    track[0] = 0
-    if cycle_finding(1, neigh_matrix, track) is True:
+    if cycle_finding(0, neigh_matrix, track) is True:
         track.append(0)
         print(track)
     else:
@@ -67,8 +66,7 @@ def cycle_finding_in_nexts(node, nexts, track):
 def hamilton_nexts(nexts):
 
     track = [-1] * len(nexts.keys())
-    track[0] = 0
-    if cycle_finding_in_nexts(1, nexts, track):
+    if cycle_finding_in_nexts(0, nexts, track):
         track.append(0)
         print(track)
     else:
