@@ -35,5 +35,3 @@ profits = [100, 60, 120]
 weights = [30, 100, 20]
 capacity = 50
 n = len(profits)
-
-bruteforce_knapsack(capacity, profits, weights, n)
