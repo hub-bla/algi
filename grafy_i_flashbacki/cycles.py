@@ -168,7 +168,7 @@ def euler_nexts(nexts):
     
 neigh_h = load_neigh("directed_hamilton.txt")
 nexts_h = nexts_dict("directed_hamilton.txt")
-neigh_e = load_neigh("undirected_euler.txt")
+neigh_e = load_neigh("directed_euler.txt")
 nexts_e = nexts_dict("directed_euler.txt")
 
 
@@ -181,5 +181,3 @@ print("HAMILTON SASIEDZTWA")
 hamilton_neigh(neigh_h)
 print("HAMILTON NASTEPNIKI ")
 hamilton_nexts(nexts_h)
-
-#
