@@ -14,11 +14,13 @@ def dynamic_knapsack(capacity,profits, weights, n):
                 table[i][w] = table[i-1][w]
         
     result = table[n][capacity]
+   
     print(f'Result: {result}')
 
 
     dcr = capacity
     picked = [0] * n
+    sum_weight = 0 
     for i in range(n, 0, -1):
         if result<=0:
             break
@@ -30,11 +32,14 @@ def dynamic_knapsack(capacity,profits, weights, n):
 
             result = result - profits[i-1]
             dcr = dcr - weights[i-1]
+            sum_weight += weights[i-1]
             picked[i-1] = 1
+    print(f'Sum weight: {sum_weight}')
+    print(f'Capacity: {capacity}')
     print(f'Picked: {picked}')
 
-profits = [120, 100, 60]
-weights = [30, 20, 100]
+profits = [100, 60, 120]
+weights = [30, 100, 20]
 capacity = 50
 n = len(profits)
 
