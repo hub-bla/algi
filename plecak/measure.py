@@ -16,8 +16,7 @@ k = [x for x in range(100, 1100, 100)]
 
 functions = {'algorytm dynamiczny': dynamic_knapsack, 'algorytm zachłanny': greedy_knapsack, 'algorytm siłowy': bruteforce_knapsack}
 
-def measure_time(f, create_knapsack, n_el):
-    capacity, profits, weights, n_elements = create_knapsack(n_el)
+def measure_time(f, capacity, profits, weights, n_elements):
     times = []
     for i in range(5):
         start = time.time()
@@ -30,12 +29,12 @@ def measure_time(f, create_knapsack, n_el):
 mns = {}
 stds = {}
 
-
-for f_name in functions.keys():
-    for n_el in k:
-        mn, std = measure_time(functions[f_name], generate_knapsack_problem, n_el)
-        mns[f'{f_name}_mean'] = mn
-        stds[f'{f_name}_std'] = std
+for n_el in k:
+    capacity, profits, weights, n_elements = generate_knapsack_problem(n_el)
+    for f_name in functions.keys():
+        mn, std = measure_time(functions[f_name], capacity, profits, weights, n_elements)
+        mns[f'{f_name}_mean_{capacity}'] = mn
+        stds[f'{f_name}_std_{capacity}'] = std
 
 knapsack_mean_df = pd.DataFrame(mns)
 knapsack_std_df = pd.DataFrame(stds)
