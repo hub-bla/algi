@@ -41,13 +41,14 @@ for n_el in k:
     for cap in capacity_arr:
         capacity, profits, weights, n_elements = generate_knapsack_problem(n_el, cap)
         for f_name in functions.keys():
-                mns[f'{f_name}_mean_{cap}'] = []
-                stds[f'{f_name}_std_{cap}'] = []
+                if (f'{f_name}_mean_{cap}' not in mns.keys()):
+                    mns[f'{f_name}_mean_{cap}'] = []
+                    stds[f'{f_name}_std_{cap}'] = []
                 print(f'Number of elements: {n_el}, Function: {f_name}')
                 mn, std = measure_time(functions[f_name], capacity, profits, weights, n_elements)
                 print(f'Mean: {mn}, Std: {std}')
                 mns[f'{f_name}_mean_{cap}'].append(mn)
-                stds[f'{f_name}_std_{cap}'] = []
+                stds[f'{f_name}_std_{cap}'].append(std)
                 print(mns[f'{f_name}_mean_{cap}'])
 
 knapsack_mean_df = pd.DataFrame(mns)
