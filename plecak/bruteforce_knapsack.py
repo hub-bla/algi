@@ -12,7 +12,7 @@ def bruteforce_knapsack(capacity, profits, weights, n_elements):
     fmax = 0
     picked = None
     sum_weight = 0
-    for x in range(1, int(math.pow(2, n_elements)-1)):
+    for x in range(1, int(math.pow(2, n_elements))):
         result = [0] *n_elements
         x = [*bin(x).replace('0b', '')]
         acc_weight = 0
@@ -31,7 +31,7 @@ def bruteforce_knapsack(capacity, profits, weights, n_elements):
 
 
 
-profits = [100, 60, 120]
-weights = [30, 100, 20]
+profits = [300, 60, 320]
+weights = [50, 20, 50]
 capacity = 50
 n = len(profits)

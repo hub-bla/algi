@@ -1,6 +1,5 @@
 import pandas as pd
-
-def print_result(capacity, result, weights, profits, profits_n_weights, acc_capacity, added):
+def print_result(capacity, result, weights, profits, acc_capacity, added):
     df_added = pd.DataFrame(added)
     gathered_profits = df_added[0].to_numpy()
     picked = [0] * len(profits)
@@ -21,18 +20,16 @@ def greedy_knapsack(capacity, profits, weights, n_elements):
     profits_n_weights = sorted(zip(profits, weights, previous_ids), reverse=True)
     added = []
     i = 0 
-    while True:
-        acc_capacity += profits_n_weights[i][1]
-        result += profits_n_weights[i][0]
-        added.append(profits_n_weights[i])
-        if acc_capacity > capacity or i>n:
-            acc_capacity -= profits_n_weights[i][1]
-            result -= profits_n_weights[i][0]
-            added.remove(profits_n_weights[i])
-            break
+    while (i<n_elements):
+        if (acc_capacity+profits_n_weights[i][1]) <= capacity:
+            acc_capacity += profits_n_weights[i][1]
+            result += profits_n_weights[i][0]
+            added.append(profits_n_weights[i])
+        
         i +=1
-    
-    print_result(capacity, result, weights, profits, profits_n_weights, acc_capacity, added)
+        
+        
+    print_result(capacity, result, weights, profits, acc_capacity, added)
 
 profits = [100, 60, 120]
 weights = [30, 100, 20]

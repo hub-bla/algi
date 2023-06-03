@@ -4,11 +4,13 @@ from bruteforce_knapsack import bruteforce_knapsack
 from greedy_knapsack import greedy_knapsack
 
 capacity, profits, weights, n_elements = load_knapsack_problem("exemplary_knapsack.txt")
+print()
+print(f'Capacity: {capacity}, Profits: {profits}, Weights: {weights}, N_elements: {n_elements}')
+print()
 
 print("Dynamic:")
 dynamic_knapsack(capacity, profits, weights, n_elements)
 print()
-# capacity,profits, weights, n
 print("Greedy:")
 greedy_knapsack(capacity, profits, weights, n_elements)
 print()
