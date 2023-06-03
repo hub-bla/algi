@@ -12,9 +12,9 @@ import time
 import numpy as np
 import pandas as pd
 
-k = [3000]
+k = [20]
 capacity_arr = [x for x in range(1000, 11000, 1000)]
-functions = {'algorytm dynamiczny': dynamic_knapsack, 'algorytm zachłanny': greedy_knapsack}
+functions = {'algorytm dynamiczny': dynamic_knapsack, 'algorytm zachłanny': greedy_knapsack, 'algorytm siłowy': bruteforce_knapsack}
 
 def measure_time(f, capacity, profits, weights, n_elements):
     times = []
@@ -53,6 +53,6 @@ for n_el in k:
 
 knapsack_mean_df = pd.DataFrame(mns)
 knapsack_std_df = pd.DataFrame(stds)
-knapsack_mean_df.to_csv("mean_without_brute_force.csv")
-knapsack_std_df.to_csv("std_without_brute_force.csv")
+knapsack_mean_df.to_csv("mean_with_brute_force.csv")
+knapsack_std_df.to_csv("std_with_brute_force.csv")
 
