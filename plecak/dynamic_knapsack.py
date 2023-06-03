@@ -24,18 +24,13 @@ def dynamic_knapsack(capacity,profits, weights, n):
     dcr = capacity
     picked = [0] * n
     sum_weight = 0 
-    #first we pick penultimate row and we're looking if there's
-    #a max profit
-    #if not, we know that in last row the last element was added
-    #
     for i in range(n, 0, -1):
         if result<=0:
             break
         if result == table[i-1][dcr]:
             continue
-            
-        else:
 
+        else:
             print(f'Weight: {weights[i-1]}, Profit: {profits[i-1]}')
 
             result = result - profits[i-1]
@@ -45,8 +40,9 @@ def dynamic_knapsack(capacity,profits, weights, n):
     print(f'Sum weight: {sum_weight}')
     print(f'Capacity: {capacity}')
     print(f'Picked: {picked}')
-profits = [1, 2, 5,6]
-weights = [2, 3, 4, 5]
-capacity = 8
+
+profits = [100, 60, 120]
+weights = [30, 100, 20]
+capacity = 50
 n = len(profits)
 

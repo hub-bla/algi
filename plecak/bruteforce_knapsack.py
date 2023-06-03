@@ -1,13 +1,5 @@
 import math
-def print_result(capacity,fmax, picked, weights, profits, sum_weight):
-    print(f'Result: {fmax}')
-    for idx,item in enumerate(picked):
-        if item == 1:
-            print(f'Weight: {weights[idx]}, Profit: {profits[idx]}')
-    
-    print(f'Sum weight: {sum_weight}')
-    print(f'Capacity: {capacity}')
-    print(f'Picked: {picked}')
+
 def bruteforce_knapsack(capacity, profits, weights, n_elements):
     fmax = 0
     picked = None
@@ -27,7 +19,6 @@ def bruteforce_knapsack(capacity, profits, weights, n_elements):
             fmax = acc_profit
             picked = [*result]
             sum_weight = acc_weight
-    print_result(capacity,fmax, picked, weights, profits, sum_weight)
 
 
 
