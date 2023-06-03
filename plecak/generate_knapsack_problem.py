@@ -1,7 +1,6 @@
 import random
 
-def generate_knapsack_problem(n_elements):
-    capacity = n_elements * 10
+def generate_knapsack_problem(n_elements, capacity):
     profits = [0] * n_elements
     weights = [0] * n_elements
     for idx in range(n_elements):
