@@ -14,7 +14,7 @@ import pandas as pd
 
 k = [20]
 capacity_arr = [x for x in range(1000, 11000, 1000)]
-functions = {'algorytm dynamiczny': dynamic_knapsack, 'algorytm zachłanny': greedy_knapsack, 'algorytm siłowy': bruteforce_knapsack}
+functions = {'algorytm siłowy': bruteforce_knapsack}
 
 def measure_time(f, capacity, profits, weights, n_elements):
     times = []
